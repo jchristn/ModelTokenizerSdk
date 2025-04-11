@@ -1,4 +1,4 @@
-﻿![ModelTokenizerSdk](https://github.com/jchristn/modelytokenizersdk/blob/main/assets/icon.ico)
+﻿![ModelTokenizerSdk](https://github.com/jchristn/modeltokenizersdk/blob/main/assets/icon.ico)
 
 # Model Tokenizer SDK
 

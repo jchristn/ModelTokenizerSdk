@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ModelTokenizerSdk</name>
+    </assembly>
+    <members>
+        <member name="T:ModelTokenizerSdk.BatchTokenizationResult">
+            <summary>
+            Batch tokenization result.
+            </summary>
+        </member>
+        <member name="P:ModelTokenizerSdk.BatchTokenizationResult.Results">
+            <summary>
+            Results.
+            </summary>
+        </member>
+        <member name="M:ModelTokenizerSdk.BatchTokenizationResult.#ctor">
+            <summary>
+            Batch tokenization result.
+            </summary>
+        </member>
+        <member name="T:ModelTokenizerSdk.ModelTokenizer">
+            <summary>
+            SDK for model tokenizer microservice (see https://hub.docker.com/r/jchristn/modeltokenizer).
+            </summary>
+        </member>
+        <member name="P:ModelTokenizerSdk.ModelTokenizer.Endpoint">
+            <summary>
+            Endpoint URL, of the form http://localhost:8000/.
+            </summary>
+        </member>
+        <member name="M:ModelTokenizerSdk.ModelTokenizer.#ctor(System.String)">
+            <summary>
+            SDK for model tokenizer microservice (see https://hub.docker.com/r/jchristn/modeltokenizer).
+            </summary>
+            <param name="endpoint">Endpoint URL, of the form http://localhost:8000/.</param>
+        </member>
+        <member name="M:ModelTokenizerSdk.ModelTokenizer.ValidateConnectivity(System.Threading.CancellationToken)">
+            <summary>
+            Validate connectivity to the model tokenizer.
+            HEAD /
+            </summary>
+            <param name="token">Cancellation token.</param>
+            <returns>True if connected.</returns>
+        </member>
+        <member name="M:ModelTokenizerSdk.ModelTokenizer.Tokenize(System.String,System.String,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Tokenize a line of text.
+            POST /tokenize
+            </summary>
+            <param name="text">Text.</param>
+            <param name="model">Model.</param>
+            <param name="hfApiKey">Huggingface API key.</param>
+            <param name="token">Cancellation token.</param>
+            <returns>Tokenization result.</returns>
+        </member>
+        <member name="M:ModelTokenizerSdk.ModelTokenizer.Tokenize(System.Collections.Generic.List{System.String},System.String,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Tokenize a list of lines of text.
+            POST /tokenize
+            </summary>
+            <param name="texts">Lines of text.</param>
+            <param name="model">Model.</param>
+            <param name="hfApiKey">Huggingface API key.</param>
+            <param name="token">Cancellation token.</param>
+            <returns>Batch tokenization result.</returns>
+        </member>
+        <member name="T:ModelTokenizerSdk.TokenizationRequest">
+            <summary>
+            Tokenization request.
+            </summary>
+        </member>
+        <member name="P:ModelTokenizerSdk.TokenizationRequest.Model">
+            <summary>
+            Model.
+            </summary>
+        </member>
+        <member name="P:ModelTokenizerSdk.TokenizationRequest.HuggingFaceApiKey">
+            <summary>
+            Huggingface API key.
+            </summary>
+        </member>
+        <member name="P:ModelTokenizerSdk.TokenizationRequest.Text">
+            <summary>
+            Text.
+            </summary>
+        </member>
+        <member name="P:ModelTokenizerSdk.TokenizationRequest.Texts">
+            <summary>
+            Texts.
+            </summary>
+        </member>
+        <member name="M:ModelTokenizerSdk.TokenizationRequest.#ctor">
+            <summary>
+            Tokenization request.
+            </summary>
+        </member>
+        <member name="T:ModelTokenizerSdk.TokenizationResult">
+            <summary>
+            Tokenization result.
+            </summary>
+        </member>
+        <member name="P:ModelTokenizerSdk.TokenizationResult.Text">
+            <summary>
+            Text.
+            </summary>
+        </member>
+        <member name="P:ModelTokenizerSdk.TokenizationResult.Tokens">
+            <summary>
+            Tokens.
+            </summary>
+        </member>
+        <member name="M:ModelTokenizerSdk.TokenizationResult.#ctor">
+            <summary>
+            Tokenization result.
+            </summary>
+        </member>
+    </members>
+</doc>

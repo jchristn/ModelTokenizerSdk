@@ -168,6 +168,16 @@
             Token count.
             </summary>
         </member>
+        <member name="P:ModelTokenizerSdk.TokenizationResult.TokenIndexStart">
+            <summary>
+            Index of the first token in the original input.
+            </summary>
+        </member>
+        <member name="P:ModelTokenizerSdk.TokenizationResult.TokenIndexEnd">
+            <summary>
+            Index of the last token in the original input.
+            </summary>
+        </member>
         <member name="P:ModelTokenizerSdk.TokenizationResult.Chunks">
             <summary>
             Chunks.

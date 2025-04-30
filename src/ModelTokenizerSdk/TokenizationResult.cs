@@ -37,6 +37,18 @@
         public int? TokenCount { get; set; } = null;
 
         /// <summary>
+        /// Index of the first token in the original input.
+        /// </summary>
+        [JsonPropertyName("token_index_start")]
+        public int? TokenIndexStart { get; set; } = null;
+
+        /// <summary>
+        /// Index of the last token in the original input.
+        /// </summary>
+        [JsonPropertyName("token_index_end")]
+        public int? TokenIndexEnd { get; set; } = null;
+
+        /// <summary>
         /// Chunks.
         /// </summary>
         [JsonPropertyName("chunks")]

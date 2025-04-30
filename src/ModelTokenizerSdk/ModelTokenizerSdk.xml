@@ -43,7 +43,7 @@
             <param name="token">Cancellation token.</param>
             <returns>True if connected.</returns>
         </member>
-        <member name="M:ModelTokenizerSdk.ModelTokenizer.Tokenize(System.String,System.String,System.String,System.Threading.CancellationToken)">
+        <member name="M:ModelTokenizerSdk.ModelTokenizer.Tokenize(System.String,System.String,System.String,System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32},System.Threading.CancellationToken)">
             <summary>
             Tokenize a line of text.
             POST /tokenize
@@ -51,10 +51,21 @@
             <param name="text">Text.</param>
             <param name="model">Model.</param>
             <param name="hfApiKey">Huggingface API key.</param>
+            <param name="maxChunkLength">Maximum chunk length.</param>
+            <param name="maxTokensPerChunk">Maximum tokens per chunk.</param>
+            <param name="tokenOverlap">Token overlap.</param>
             <param name="token">Cancellation token.</param>
             <returns>Tokenization result.</returns>
         </member>
-        <member name="M:ModelTokenizerSdk.ModelTokenizer.Tokenize(System.Collections.Generic.List{System.String},System.String,System.String,System.Threading.CancellationToken)">
+        <member name="M:ModelTokenizerSdk.ModelTokenizer.Tokenize(ModelTokenizerSdk.TokenizationRequest,System.Threading.CancellationToken)">
+            <summary>
+            Tokenize a list of lines of text.
+            </summary>
+            <param name="req">Tokenization request.</param>
+            <param name="token">Cancellation token.</param>
+            <returns>Batch tokenization result.</returns>
+        </member>
+        <member name="M:ModelTokenizerSdk.ModelTokenizer.TokenizeBatch(System.Collections.Generic.List{System.String},System.String,System.String,System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32},System.Threading.CancellationToken)">
             <summary>
             Tokenize a list of lines of text.
             POST /tokenize
@@ -62,6 +73,17 @@
             <param name="texts">Lines of text.</param>
             <param name="model">Model.</param>
             <param name="hfApiKey">Huggingface API key.</param>
+            <param name="maxChunkLength">Maximum chunk length.</param>
+            <param name="maxTokensPerChunk">Maximum tokens per chunk.</param>
+            <param name="tokenOverlap">Token overlap.</param>
+            <param name="token">Cancellation token.</param>
+            <returns>Batch tokenization result.</returns>
+        </member>
+        <member name="M:ModelTokenizerSdk.ModelTokenizer.TokenizeBatch(ModelTokenizerSdk.TokenizationRequest,System.Threading.CancellationToken)">
+            <summary>
+            Tokenize a list of lines of text.
+            </summary>
+            <param name="req">Tokenization request.</param>
             <param name="token">Cancellation token.</param>
             <returns>Batch tokenization result.</returns>
         </member>
@@ -78,6 +100,21 @@
         <member name="P:ModelTokenizerSdk.TokenizationRequest.HuggingFaceApiKey">
             <summary>
             Huggingface API key.
+            </summary>
+        </member>
+        <member name="P:ModelTokenizerSdk.TokenizationRequest.MaxChunkLength">
+            <summary>
+            Maximum chunk length in characters.
+            </summary>
+        </member>
+        <member name="P:ModelTokenizerSdk.TokenizationRequest.MaxTokensPerChunk">
+            <summary>
+            Maximum tokens per chunk.
+            </summary>
+        </member>
+        <member name="P:ModelTokenizerSdk.TokenizationRequest.TokenOverlap">
+            <summary>
+            Token overlap.
             </summary>
         </member>
         <member name="P:ModelTokenizerSdk.TokenizationRequest.Text">
@@ -105,9 +142,24 @@
             Text.
             </summary>
         </member>
+        <member name="P:ModelTokenizerSdk.TokenizationResult.SHA256">
+            <summary>
+            SHA-256.
+            </summary>
+        </member>
         <member name="P:ModelTokenizerSdk.TokenizationResult.Tokens">
             <summary>
             Tokens.
+            </summary>
+        </member>
+        <member name="P:ModelTokenizerSdk.TokenizationResult.TokenCount">
+            <summary>
+            Token count.
+            </summary>
+        </member>
+        <member name="P:ModelTokenizerSdk.TokenizationResult.Chunks">
+            <summary>
+            Chunks.
             </summary>
         </member>
         <member name="M:ModelTokenizerSdk.TokenizationResult.#ctor">

@@ -19,10 +19,41 @@
         public string Text { get; set; } = null;
 
         /// <summary>
+        /// SHA-256.
+        /// </summary>
+        [JsonPropertyName("sha256")]
+        public string SHA256 { get; set; } = null;
+
+        /// <summary>
         /// Tokens.
         /// </summary>
         [JsonPropertyName("tokens")]
         public List<string> Tokens { get; set; } = new List<string>();
+
+        /// <summary>
+        /// Token count.
+        /// </summary>
+        [JsonPropertyName("token_count")]
+        public int? TokenCount { get; set; } = null;
+
+        /// <summary>
+        /// Chunks.
+        /// </summary>
+        [JsonPropertyName("chunks")]
+        public List<TokenizationResult> Chunks
+        {
+            get
+            {
+                return _Chunks;
+            }
+            set
+            {
+                if (value == null) value = new List<TokenizationResult>();
+                _Chunks = value;
+            }
+        }
+
+        private List<TokenizationResult> _Chunks = new List<TokenizationResult>();
 
         /// <summary>
         /// Tokenization result.

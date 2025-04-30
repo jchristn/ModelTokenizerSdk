@@ -4,9 +4,11 @@
     using System.Collections.Generic;
     using System.Net;
     using System.Net.Http;
+    using System.Reflection;
     using System.Runtime.Serialization.Json;
     using System.Threading;
     using System.Threading.Tasks;
+    using System.Xml.Linq;
     using RestWrapper;
     using SerializationHelper;
     using static System.Net.Mime.MediaTypeNames;
@@ -85,22 +87,47 @@
         /// <param name="text">Text.</param>
         /// <param name="model">Model.</param>
         /// <param name="hfApiKey">Huggingface API key.</param>
+        /// <param name="maxChunkLength">Maximum chunk length.</param>
+        /// <param name="maxTokensPerChunk">Maximum tokens per chunk.</param>
+        /// <param name="tokenOverlap">Token overlap.</param>
         /// <param name="token">Cancellation token.</param>
         /// <returns>Tokenization result.</returns>
-        public async Task<TokenizationResult> Tokenize(string text, string model, string hfApiKey = null, CancellationToken token = default)
+        public async Task<TokenizationResult> Tokenize(
+            string text, 
+            string model, 
+            string hfApiKey = null, 
+            int? maxChunkLength = null,
+            int? maxTokensPerChunk = null,
+            int? tokenOverlap = null,
+            CancellationToken token = default)
         {
-            if (String.IsNullOrEmpty(text)) throw new ArgumentNullException(nameof(text));
-
-            using (RestRequest req = new RestRequest(Endpoint + "tokenize", HttpMethod.Post, "application/json"))
+            return await Tokenize(new TokenizationRequest
             {
-                string json = _Serializer.SerializeJson(new TokenizationRequest
-                {
-                    Model = model,
-                    HuggingFaceApiKey = hfApiKey,
-                    Text = text
-                });
+                Text = text,
+                Model = model,
+                HuggingFaceApiKey = hfApiKey,
+                MaxChunkLength = maxChunkLength,
+                MaxTokensPerChunk = maxTokensPerChunk,
+                TokenOverlap = tokenOverlap
+            });
+        }
 
-                using (RestResponse resp = await req.SendAsync(json, token).ConfigureAwait(false))
+        /// <summary>
+        /// Tokenize a list of lines of text.
+        /// </summary>
+        /// <param name="req">Tokenization request.</param>
+        /// <param name="token">Cancellation token.</param>
+        /// <returns>Batch tokenization result.</returns>
+        public async Task<TokenizationResult> Tokenize(TokenizationRequest req, CancellationToken token = default)
+        {
+            if (req == null) throw new ArgumentNullException(nameof(req));
+            if (String.IsNullOrEmpty(req.Text)) throw new ArgumentNullException(nameof(req.Text));
+
+            using (RestRequest restRequest = new RestRequest(Endpoint + "tokenize", HttpMethod.Post, "application/json"))
+            {
+                string json = _Serializer.SerializeJson(req, true);
+
+                using (RestResponse resp = await restRequest.SendAsync(json, token).ConfigureAwait(false))
                 {
                     if (resp != null && resp.StatusCode == 200 && !String.IsNullOrEmpty(resp.DataAsString))
                     {
@@ -119,22 +146,47 @@
         /// <param name="texts">Lines of text.</param>
         /// <param name="model">Model.</param>
         /// <param name="hfApiKey">Huggingface API key.</param>
+        /// <param name="maxChunkLength">Maximum chunk length.</param>
+        /// <param name="maxTokensPerChunk">Maximum tokens per chunk.</param>
+        /// <param name="tokenOverlap">Token overlap.</param>
         /// <param name="token">Cancellation token.</param>
         /// <returns>Batch tokenization result.</returns>
-        public async Task<BatchTokenizationResult> Tokenize(List<string> texts, string model, string hfApiKey = null, CancellationToken token = default)
+        public async Task<BatchTokenizationResult> TokenizeBatch(
+            List<string> texts, 
+            string model, 
+            string hfApiKey = null,
+            int? maxChunkLength = null,
+            int? maxTokensPerChunk = null,
+            int? tokenOverlap = null,
+            CancellationToken token = default)
         {
-            if (texts == null || texts.Count < 1) throw new ArgumentNullException(nameof(texts));
-
-            using (RestRequest req = new RestRequest(Endpoint + "tokenize", HttpMethod.Post, "application/json"))
+            return await TokenizeBatch(new TokenizationRequest
             {
-                string json = _Serializer.SerializeJson(new TokenizationRequest
-                {
-                    Model = model,
-                    HuggingFaceApiKey = hfApiKey,
-                    Texts = texts
-                });
+                Texts = texts,
+                Model = model,
+                HuggingFaceApiKey = hfApiKey,
+                MaxChunkLength = maxChunkLength,
+                MaxTokensPerChunk = maxTokensPerChunk,
+                TokenOverlap = tokenOverlap
+            });
+        }
 
-                using (RestResponse resp = await req.SendAsync(json, token).ConfigureAwait(false))
+        /// <summary>
+        /// Tokenize a list of lines of text.
+        /// </summary>
+        /// <param name="req">Tokenization request.</param>
+        /// <param name="token">Cancellation token.</param>
+        /// <returns>Batch tokenization result.</returns>
+        public async Task<BatchTokenizationResult> TokenizeBatch(TokenizationRequest req, CancellationToken token = default)
+        {
+            if (req == null) throw new ArgumentNullException(nameof(req));
+            if (req.Texts == null || req.Texts.Count < 1) throw new ArgumentNullException(nameof(req.Texts));
+
+            using (RestRequest restRequest = new RestRequest(Endpoint + "tokenize", HttpMethod.Post, "application/json"))
+            {
+                string json = _Serializer.SerializeJson(req, true);
+
+                using (RestResponse resp = await restRequest.SendAsync(json, token).ConfigureAwait(false))
                 {
                     if (resp != null && resp.StatusCode == 200 && !String.IsNullOrEmpty(resp.DataAsString))
                     {

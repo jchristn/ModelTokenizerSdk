@@ -98,7 +98,7 @@
 
                 // Tokenize batch of texts
                 Console.WriteLine("\nTokenizing batch...");
-                var batchResult = await tokenizer.Tokenize(texts, "sentence-transformers/all-MiniLM-L6-v2");
+                var batchResult = await tokenizer.TokenizeBatch(texts, "sentence-transformers/all-MiniLM-L6-v2");
 
                 // Display results
                 if (batchResult != null && batchResult.Results != null)

@@ -16,7 +16,7 @@
     /// <summary>
     /// SDK for model tokenizer microservice (see https://hub.docker.com/r/jchristn/modeltokenizer).
     /// </summary>
-    public class ModelTokenizer
+    public class ModelTokenizer : IDisposable
     {
         #region Public-Members
 
@@ -44,6 +44,7 @@
 
         private string _Endpoint = "http://localhost:8000/";
         private Serializer _Serializer = new Serializer();
+        private bool _Disposed = false;
 
         #endregion
 
@@ -196,6 +197,33 @@
                     return null;
                 }
             }
+        }
+
+        /// <summary>
+        /// Dispose.
+        /// </summary>
+        /// <param name="disposing">Disposing.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_Disposed)
+            {
+                if (disposing)
+                {
+                }
+
+                _Endpoint = null;
+                _Serializer = null;
+                _Disposed = true;
+            }
+        }
+
+        /// <summary>
+        /// Dispose.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
 
         #endregion

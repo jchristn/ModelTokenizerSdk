@@ -7,7 +7,7 @@
 		<DocumentationFile>ModelTokenizerSdk.xml</DocumentationFile>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Title>Model Tokenizer SDK</Title>
-		<Version>2.0.3</Version>
+		<Version>2.0.4</Version>
 		<Authors>Joel Christner</Authors>
 		<Description>Model tokenizer SDK, requires the modeltokenizer docker image</Description>
 		<Copyright>(c)2025 Joel Christner</Copyright>

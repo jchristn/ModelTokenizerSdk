@@ -98,6 +98,102 @@
             Dispose.
             </summary>
         </member>
+        <member name="T:ModelTokenizerSdk.TokenEstimator">
+            <summary>
+            Provides a generic estimation of token counts for any input string.
+            This is a simple approximation and not a precise implementation of any specific tokenizer.
+            </summary>
+        </member>
+        <member name="P:ModelTokenizerSdk.TokenEstimator.AvgCharsPerToken">
+            <summary>
+            Average ratio of charactesr to tokens based on general observations.
+            </summary>
+        </member>
+        <member name="P:ModelTokenizerSdk.TokenEstimator.SeparatorTokens">
+            <summary>
+            Characters that commonly become individual tokens in many tokenizers.
+            </summary>
+        </member>
+        <member name="P:ModelTokenizerSdk.TokenEstimator.TokenSplitThreshold">
+            <summary>
+            Maximum length of a token before it gets split into multiple tokens.
+            Tokens longer than this threshold will be counted as multiple tokens.
+            If null, tokens will never be split regardless of length.
+            </summary>
+        </member>
+        <member name="M:ModelTokenizerSdk.TokenEstimator.EstimateTokenCount(System.String,System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32})">
+            <summary>
+            Estimates the number of tokens in the input string without making assumptions about content type.
+            </summary>
+            <param name="input">The input string to analyze.</param>
+            <param name="maxChunkLength">When set, no chunk of text shall exceed this length in characters.</param>
+            <param name="maxTokensPerChunk">When set, no chunk of text shall have more than this number of tokens.</param>
+            <param name="tokenOverlap">When set, this number of tokens from the end of one chunk shall be the starting point for the next chunk.</param>
+            <returns>TokenizationResult containing estimated token information and chunks.</returns>
+        </member>
+        <member name="M:ModelTokenizerSdk.TokenEstimator.EstimateTokenCount(System.Collections.Generic.List{System.String},System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32})">
+            <summary>
+            Estimates token counts for multiple input strings.
+            </summary>
+            <param name="inputs">List of input strings to analyze.</param>
+            <param name="maxChunkLength">When set, no chunk of text shall exceed this length in characters.</param>
+            <param name="maxTokensPerChunk">When set, no chunk of text shall have more than this number of tokens.</param>
+            <param name="tokenOverlap">When set, this number of tokens from the end of one chunk shall be the starting point for the next chunk.</param>
+            <returns>BatchTokenizationResult containing results for each input.</returns>
+        </member>
+        <member name="M:ModelTokenizerSdk.TokenEstimator.GenerateApproximateTokens(System.String)">
+            <summary>
+            Generates a list of approximate tokens based on our heuristics.
+            </summary>
+            <param name="input">The input string to tokenize.</param>
+            <returns>List of approximate tokens.</returns>
+        </member>
+        <member name="M:ModelTokenizerSdk.TokenEstimator.AddTokenWithPossibleSplit(System.Collections.Generic.List{System.String},System.String)">
+            <summary>
+            Adds a token to the token list, potentially splitting it if it exceeds the token split threshold.
+            </summary>
+            <param name="tokens">The list of tokens to add to.</param>
+            <param name="token">The token to add, potentially splitting it.</param>
+        </member>
+        <member name="M:ModelTokenizerSdk.TokenEstimator.SHA256Hash(System.Byte[])">
+            <summary>
+            Computes the SHA-256 hash of the input byte array.
+            </summary>
+            <param name="data">Input byte array to hash.</param>
+            <returns>Byte array containing the hash.</returns>
+        </member>
+        <member name="M:ModelTokenizerSdk.TokenEstimator.SHA256Hash(System.String)">
+            <summary>
+            Computes the SHA-256 hash of the input string.
+            </summary>
+            <param name="str">Input string to hash.</param>
+            <returns>Byte array containing the hash.</returns>
+        </member>
+        <member name="M:ModelTokenizerSdk.TokenEstimator.IsPunctuation(System.String)">
+            <summary>
+            Checks if a token is a punctuation mark.
+            </summary>
+            <param name="token">Token to check.</param>
+            <returns>True if the token is a punctuation mark, false otherwise.</returns>
+        </member>
+        <member name="M:ModelTokenizerSdk.TokenEstimator.ReconstructText(System.Collections.Generic.List{System.String})">
+            <summary>
+            Reconstructs text from a list of tokens with consistent spacing.
+            </summary>
+            <param name="tokens">List of tokens to reconstruct.</param>
+            <returns>Reconstructed text string.</returns>
+        </member>
+        <member name="M:ModelTokenizerSdk.TokenEstimator.CreateChunks(System.String,System.Collections.Generic.List{System.String},System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32})">
+            <summary>
+            Creates chunks based on specified parameters.
+            </summary>
+            <param name="input">Original input text.</param>
+            <param name="tokens">List of tokens.</param>
+            <param name="maxChunkLength">Maximum character length per chunk.</param>
+            <param name="maxTokensPerChunk">Maximum tokens per chunk.</param>
+            <param name="tokenOverlap">Number of overlapping tokens between chunks.</param>
+            <returns>List of TokenizationResult objects representing chunks.</returns>
+        </member>
         <member name="T:ModelTokenizerSdk.TokenizationRequest">
             <summary>
             Tokenization request.

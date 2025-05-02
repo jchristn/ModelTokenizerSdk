@@ -71,13 +71,20 @@
         /// <returns>True if connected.</returns>
         public async Task<bool> ValidateConnectivity(CancellationToken token = default)
         {
-            using (RestRequest req = new RestRequest(Endpoint, HttpMethod.Head))
+            try
             {
-                using (RestResponse resp = await req.SendAsync(token).ConfigureAwait(false))
+                using (RestRequest req = new RestRequest(Endpoint, HttpMethod.Head))
                 {
-                    if (resp != null && resp.StatusCode == 200) return true;
-                    return false;
+                    using (RestResponse resp = await req.SendAsync(token).ConfigureAwait(false))
+                    {
+                        if (resp != null && resp.StatusCode == 200) return true;
+                        return false;
+                    }
                 }
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
 

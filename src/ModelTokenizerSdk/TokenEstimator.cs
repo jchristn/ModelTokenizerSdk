@@ -77,7 +77,7 @@
             '|', '=', '+', '-', '*', '/', '\\', '@', '#', '}', '%', '^', '&'
         };
 
-        private static int? _TokenSplitThreshold = 7;
+        private static int? _TokenSplitThreshold = null;
 
         #endregion
 

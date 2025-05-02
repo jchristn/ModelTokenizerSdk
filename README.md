@@ -219,6 +219,30 @@ TokenizationResult result1 = await tokenizer.Tokenize(
 */
 ```
 
+## Estimating Tokenization without a Model
+
+Should you need to estimate tokenization without a model, use the `TokenEstimator` class, which follows the same signature and response as the `ModelTokenizerSdk`.  Note that `TokenEstimator` is only an estimator, and does not actually use a model, therefore, there is no dictionary specifying what the exact tokens are in a given model.  
+
+```csharp
+TokenEstimator.TokenSplitThreshold = 7; // automatically split tokens that are at least 7 characters in length
+TokenEstimator.AvgCharsPerToken = 4.0;  // average number of characters per token
+TokenEstimator.SeparatorTokens = [ '.', ',', ';', ... ];  // or use the default values
+
+TokenizationResult result = TokenEstimator.EstimateTokenCount(
+    "The quick brown fox jumped happily over the lazy brown dog chillaxing in his bed.",
+    128, // max chunk length, or null for no chunking
+    8,   // max tokens per chunk
+    2    // token overlap amongst chunks
+);
+
+BatchTokenizationResult result = TokenEstimator.EstimateTokenCount(
+    new List<string> { "Hello, world!" },
+    128,
+    8,
+    2
+);
+```
+
 ## Version History
 
 Please refer to CHANGELOG.md.

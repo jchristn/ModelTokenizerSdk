@@ -20,6 +20,7 @@
             {
                 // Initialize the tokenizer
                 ModelTokenizer tokenizer = new ModelTokenizer(endpoint);
+                tokenizer.Logger = Console.WriteLine;
 
                 // Check connectivity
                 Console.WriteLine("\nValidating connectivity...");

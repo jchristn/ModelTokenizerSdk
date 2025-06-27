@@ -10,14 +10,14 @@
     /// Provides a generic estimation of token counts for any input string.
     /// This is a simple approximation and not a precise implementation of any specific tokenizer.
     /// </summary>
-    public static class TokenEstimator
+    public class TokenEstimator : IDisposable
     {
         #region Public-Members
 
         /// <summary>
         /// Average ratio of charactesr to tokens based on general observations.
         /// </summary>
-        public static double AvgCharsPerToken
+        public double AvgCharsPerToken
         {
             get
             {
@@ -33,7 +33,7 @@
         /// <summary>
         /// Characters that commonly become individual tokens in many tokenizers.
         /// </summary>
-        public static char[] SeparatorTokens
+        public char[] SeparatorTokens
         {
             get
             {
@@ -52,7 +52,7 @@
         /// Tokens longer than this threshold will be counted as multiple tokens.
         /// If null, tokens will never be split regardless of length.
         /// </summary>
-        public static int? TokenSplitThreshold
+        public int? TokenSplitThreshold
         {
             get
             {
@@ -78,10 +78,52 @@
         };
 
         private static int? _TokenSplitThreshold = null;
+        private bool _Disposed = false;
+
+        #endregion
+
+        #region Constructors-and-Factories
+
+        /// <summary>
+        /// Provides a generic estimation of token counts for any input string.
+        /// This is a simple approximation and not a precise implementation of any specific tokenizer.
+        /// </summary>
+        public TokenEstimator()
+        {
+
+        }
 
         #endregion
 
         #region Public-Methods
+
+        /// <summary>
+        /// Dispose.
+        /// </summary>
+        /// <param name="disposing">Disposing.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_Disposed)
+            {
+                if (disposing)
+                {
+                    // TODO: dispose managed state (managed objects)
+                }
+
+                _SeparatorTokens = null;
+
+                _Disposed = true;
+            }
+        }
+
+        /// <summary>
+        /// Dispose.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
 
         /// <summary>
         /// Estimates the number of tokens in the input string without making assumptions about content type.
@@ -91,7 +133,7 @@
         /// <param name="maxTokensPerChunk">When set, no chunk of text shall have more than this number of tokens.</param>
         /// <param name="tokenOverlap">When set, this number of tokens from the end of one chunk shall be the starting point for the next chunk.</param>
         /// <returns>TokenizationResult containing estimated token information and chunks.</returns>
-        public static TokenizationResult EstimateTokenCount(
+        public TokenizationResult EstimateTokenCount(
             string input,
             int? maxChunkLength = null,
             int? maxTokensPerChunk = null,
@@ -138,7 +180,7 @@
         /// <param name="maxTokensPerChunk">When set, no chunk of text shall have more than this number of tokens.</param>
         /// <param name="tokenOverlap">When set, this number of tokens from the end of one chunk shall be the starting point for the next chunk.</param>
         /// <returns>BatchTokenizationResult containing results for each input.</returns>
-        public static BatchTokenizationResult EstimateTokenCount(
+        public BatchTokenizationResult EstimateTokenCount(
             List<string> inputs,
             int? maxChunkLength = null,
             int? maxTokensPerChunk = null,
@@ -169,7 +211,7 @@
         /// </summary>
         /// <param name="input">The input string to tokenize.</param>
         /// <returns>List of approximate tokens.</returns>
-        private static List<string> GenerateApproximateTokens(string input)
+        private List<string> GenerateApproximateTokens(string input)
         {
             var tokens = new List<string>();
 
@@ -228,7 +270,7 @@
         /// </summary>
         /// <param name="tokens">The list of tokens to add to.</param>
         /// <param name="token">The token to add, potentially splitting it.</param>
-        private static void AddTokenWithPossibleSplit(List<string> tokens, string token)
+        private void AddTokenWithPossibleSplit(List<string> tokens, string token)
         {
             if (string.IsNullOrEmpty(token))
                 return;
@@ -274,7 +316,7 @@
         /// </summary>
         /// <param name="data">Input byte array to hash.</param>
         /// <returns>Byte array containing the hash.</returns>
-        private static byte[] SHA256Hash(byte[] data)
+        private byte[] SHA256Hash(byte[] data)
         {
             if (data == null || data.Length < 1) data = Array.Empty<byte>();
             using (SHA256 hash = SHA256.Create())
@@ -288,7 +330,7 @@
         /// </summary>
         /// <param name="str">Input string to hash.</param>
         /// <returns>Byte array containing the hash.</returns>
-        private static byte[] SHA256Hash(string str)
+        private byte[] SHA256Hash(string str)
         {
             if (String.IsNullOrEmpty(str)) str = "";
             return SHA256Hash(Encoding.UTF8.GetBytes(str));
@@ -299,7 +341,7 @@
         /// </summary>
         /// <param name="token">Token to check.</param>
         /// <returns>True if the token is a punctuation mark, false otherwise.</returns>
-        private static bool IsPunctuation(string token)
+        private bool IsPunctuation(string token)
         {
             return token.Length == 1 && (_SeparatorTokens.Contains(token[0]) || token[0] == '.');
         }
@@ -309,7 +351,7 @@
         /// </summary>
         /// <param name="tokens">List of tokens to reconstruct.</param>
         /// <returns>Reconstructed text string.</returns>
-        private static string ReconstructText(List<string> tokens)
+        private string ReconstructText(List<string> tokens)
         {
             if (tokens == null || tokens.Count == 0)
             {
@@ -338,7 +380,7 @@
         /// <param name="maxTokensPerChunk">Maximum tokens per chunk.</param>
         /// <param name="tokenOverlap">Number of overlapping tokens between chunks.</param>
         /// <returns>List of TokenizationResult objects representing chunks.</returns>
-        private static List<TokenizationResult> CreateChunks(
+        private List<TokenizationResult> CreateChunks(
             string input,
             List<string> tokens,
             int? maxChunkLength,
@@ -479,7 +521,7 @@
             return chunks;
         }
 
-        private static string ToHexString(byte[] bytes)
+        private string ToHexString(byte[] bytes)
         {
             if (bytes == null)
                 throw new ArgumentNullException(nameof(bytes));
@@ -496,7 +538,7 @@
             return new string(c);
         }
 
-        private static char GetHexValue(int value)
+        private char GetHexValue(int value)
         {
             if (value < 10)
                 return (char)('0' + value);

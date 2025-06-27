@@ -24,6 +24,16 @@
             SDK for model tokenizer microservice (see https://hub.docker.com/r/jchristn/modeltokenizer).
             </summary>
         </member>
+        <member name="P:ModelTokenizerSdk.ModelTokenizer.Header">
+            <summary>
+            Header to prepend to log messages.
+            </summary>
+        </member>
+        <member name="P:ModelTokenizerSdk.ModelTokenizer.Logger">
+            <summary>
+            Method to invoke to send log messages.
+            </summary>
+        </member>
         <member name="P:ModelTokenizerSdk.ModelTokenizer.Endpoint">
             <summary>
             Endpoint URL, of the form http://localhost:8000/.
@@ -119,6 +129,23 @@
             Maximum length of a token before it gets split into multiple tokens.
             Tokens longer than this threshold will be counted as multiple tokens.
             If null, tokens will never be split regardless of length.
+            </summary>
+        </member>
+        <member name="M:ModelTokenizerSdk.TokenEstimator.#ctor">
+            <summary>
+            Provides a generic estimation of token counts for any input string.
+            This is a simple approximation and not a precise implementation of any specific tokenizer.
+            </summary>
+        </member>
+        <member name="M:ModelTokenizerSdk.TokenEstimator.Dispose(System.Boolean)">
+            <summary>
+            Dispose.
+            </summary>
+            <param name="disposing">Disposing.</param>
+        </member>
+        <member name="M:ModelTokenizerSdk.TokenEstimator.Dispose">
+            <summary>
+            Dispose.
             </summary>
         </member>
         <member name="M:ModelTokenizerSdk.TokenEstimator.EstimateTokenCount(System.String,System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32})">

@@ -21,6 +21,16 @@
         #region Public-Members
 
         /// <summary>
+        /// Header to prepend to log messages.
+        /// </summary>
+        public string Header { get; set; } = "[ModelTokenizer] ";
+
+        /// <summary>
+        /// Method to invoke to send log messages.
+        /// </summary>
+        public Action<string> Logger { get; set; } = null;
+
+        /// <summary>
         /// Endpoint URL, of the form http://localhost:8000/.
         /// </summary>
         public string Endpoint
@@ -42,6 +52,7 @@
 
         #region Private-Members
 
+        private string _Header = "[ModelTokenizerSdk] ";
         private string _Endpoint = "http://localhost:8000/";
         private Serializer _Serializer = new Serializer();
         private bool _Disposed = false;
@@ -77,13 +88,22 @@
                 {
                     using (RestResponse resp = await req.SendAsync(token).ConfigureAwait(false))
                     {
-                        if (resp != null && resp.StatusCode == 200) return true;
-                        return false;
+                        if (resp != null && resp.StatusCode == 200)
+                        {
+                            Log("connectivity validated to " + Endpoint);
+                            return true;
+                        }
+                        else
+                        {
+                            Log("no connectivity to " + Endpoint);
+                            return false;
+                        }
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Log("exception:" + Environment.NewLine + e.ToString());
                 return false;
             }
         }
@@ -137,12 +157,33 @@
 
                 using (RestResponse resp = await restRequest.SendAsync(json, token).ConfigureAwait(false))
                 {
-                    if (resp != null && resp.StatusCode == 200 && !String.IsNullOrEmpty(resp.DataAsString))
+                    if (resp != null)
                     {
-                        return _Serializer.DeserializeJson<TokenizationResult>(resp.DataAsString);
+                        if (resp.StatusCode == 200)
+                        {
+                            if (!String.IsNullOrEmpty(resp.DataAsString))
+                            {
+                                TokenizationResult ret = _Serializer.DeserializeJson<TokenizationResult>(resp.DataAsString);
+                                Log("success response from " + Endpoint + ": " + resp.DataAsString.Length + " bytes, " + ret.Tokens.Count + " tokens, " + ret.Chunks.Count + " chunks");
+                                return ret;
+                            }
+                            else
+                            {
+                                Log("success response from " + Endpoint + " with no data");
+                                return null;
+                            }
+                        }
+                        else
+                        {
+                            Log("non-success response from " + Endpoint + " (status " + resp.StatusCode + "):" + Environment.NewLine + resp.DataAsString);
+                            return null;
+                        }
                     }
-
-                    return null;
+                    else
+                    {
+                        Log("no response from " + Endpoint);
+                        return null;
+                    }
                 }
             }
         }
@@ -196,12 +237,33 @@
 
                 using (RestResponse resp = await restRequest.SendAsync(json, token).ConfigureAwait(false))
                 {
-                    if (resp != null && resp.StatusCode == 200 && !String.IsNullOrEmpty(resp.DataAsString))
+                    if (resp != null)
                     {
-                        return _Serializer.DeserializeJson<BatchTokenizationResult>(resp.DataAsString);
+                        if (resp.StatusCode == 200)
+                        {
+                            if (!String.IsNullOrEmpty(resp.DataAsString))
+                            {
+                                BatchTokenizationResult ret = _Serializer.DeserializeJson<BatchTokenizationResult>(resp.DataAsString);
+                                Log("success response from " + Endpoint + ": " + resp.DataAsString.Length + " bytes, " + ret.Results.Count + " batch results");
+                                return ret;
+                            }
+                            else
+                            {
+                                Log("success response from " + Endpoint + " with no data");
+                                return null;
+                            }
+                        }
+                        else
+                        {
+                            Log("non-success response from " + Endpoint + " (status " + resp.StatusCode + "):" + Environment.NewLine + resp.DataAsString);
+                            return null;
+                        }
                     }
-
-                    return null;
+                    else
+                    {
+                        Log("no response from " + Endpoint);
+                        return null;
+                    }
                 }
             }
         }
@@ -236,6 +298,14 @@
         #endregion
 
         #region Private-Methods
+
+        private void Log(string msg)
+        {
+            if (!String.IsNullOrEmpty(msg) && Logger != null)
+            {
+                Logger(_Header + msg);
+            }
+        }
 
         #endregion
     }

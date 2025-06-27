@@ -7,6 +7,8 @@
 
     class Program
     {
+        private static TokenEstimator _TokenEstimator = new TokenEstimator();
+
         public static void Main(string[] args)
         {
             Console.WriteLine("TokenEstimator Demo");
@@ -59,7 +61,7 @@
 
             string input = "This is a simple test string with some {special} characters!";
 
-            var result = TokenEstimator.EstimateTokenCount(input);
+            var result = _TokenEstimator.EstimateTokenCount(input);
 
             PrintTokenizationResult(result);
             Console.WriteLine();
@@ -80,7 +82,7 @@
                 "reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.";
 
             // Set max chunk length to 50 characters
-            var result = TokenEstimator.EstimateTokenCount(input, maxChunkLength: 50);
+            var result = _TokenEstimator.EstimateTokenCount(input, maxChunkLength: 50);
 
             PrintTokenizationResult(result);
             Console.WriteLine();
@@ -94,13 +96,13 @@
             PrintTokenSplittingInfo();
             Console.WriteLine();
 
-            string input = "The TokenEstimator class provides a generic estimation of token counts " +
+            string input = "The _TokenEstimator class provides a generic estimation of token counts " +
                 "for any input string. This is a simple approximation and not a precise implementation " +
                 "of any specific tokenizer. It uses heuristics to estimate token counts based on " +
                 "character counts, word counts, and the presence of special characters.";
 
             // Set max tokens per chunk to 10
-            var result = TokenEstimator.EstimateTokenCount(input, maxTokensPerChunk: 10);
+            var result = _TokenEstimator.EstimateTokenCount(input, maxTokensPerChunk: 10);
 
             PrintTokenizationResult(result);
             Console.WriteLine();
@@ -119,7 +121,7 @@
                 "This sentence is a commonly used pangram in English.";
 
             // Set max tokens per chunk to 8 with 3 token overlap
-            var result = TokenEstimator.EstimateTokenCount(input, maxTokensPerChunk: 8, tokenOverlap: 3);
+            var result = _TokenEstimator.EstimateTokenCount(input, maxTokensPerChunk: 8, tokenOverlap: 3);
 
             PrintTokenizationResult(result);
             Console.WriteLine();
@@ -142,7 +144,7 @@
             };
 
             // Process batch with max 10 tokens per chunk
-            var result = TokenEstimator.EstimateTokenCount(inputs, maxTokensPerChunk: 10);
+            var result = _TokenEstimator.EstimateTokenCount(inputs, maxTokensPerChunk: 10);
 
             PrintBatchTokenizationResult(result);
             Console.WriteLine();
@@ -158,11 +160,11 @@
 
             string input = "Programming languages like C# provide static classes " +
                 "that contain methods that can be called without creating an instance " +
-                "of the class. In this example, TokenEstimator is implemented as a " +
+                "of the class. In this example, _TokenEstimator is implemented as a " +
                 "static class with methods for estimating token counts.";
 
             // Set both max length and max tokens with overlap
-            var result = TokenEstimator.EstimateTokenCount(
+            var result = _TokenEstimator.EstimateTokenCount(
                 input,
                 maxChunkLength: 60,
                 maxTokensPerChunk: 12,
@@ -183,7 +185,7 @@
             string input = "Testing with extremely short chunk constraints.";
 
             // Set very short constraints to demonstrate how the algorithm handles edge cases
-            var result = TokenEstimator.EstimateTokenCount(
+            var result = _TokenEstimator.EstimateTokenCount(
                 input,
                 maxChunkLength: 10,
                 maxTokensPerChunk: 2);
@@ -205,7 +207,7 @@
                 "as should semicolons; colons: and other marks!";
 
             // Set constraints to create multiple chunks with punctuation
-            var result = TokenEstimator.EstimateTokenCount(
+            var result = _TokenEstimator.EstimateTokenCount(
                 input,
                 maxTokensPerChunk: 10,
                 tokenOverlap: 2);
@@ -221,8 +223,8 @@
             Console.WriteLine("Constraints: maxChunkLength = null, maxTokensPerChunk = 8, tokenOverlap = null");
 
             // Temporarily disable token splitting
-            int? originalThreshold = TokenEstimator.TokenSplitThreshold;
-            TokenEstimator.TokenSplitThreshold = null;
+            int? originalThreshold = _TokenEstimator.TokenSplitThreshold;
+            _TokenEstimator.TokenSplitThreshold = null;
 
             PrintTokenSplittingInfo(); // Will show as disabled
             Console.WriteLine();
@@ -231,12 +233,12 @@
                 "English word that should not be split when token splitting is disabled. " +
                 "Pneumonoultramicroscopicsilicovolcanoconiosis is another extremely long word.";
 
-            var result = TokenEstimator.EstimateTokenCount(input, maxTokensPerChunk: 8);
+            var result = _TokenEstimator.EstimateTokenCount(input, maxTokensPerChunk: 8);
 
             PrintTokenizationResult(result);
 
             // Restore the original threshold
-            TokenEstimator.TokenSplitThreshold = originalThreshold;
+            _TokenEstimator.TokenSplitThreshold = originalThreshold;
 
             Console.WriteLine();
         }
@@ -248,8 +250,8 @@
             Console.WriteLine("Constraints: maxChunkLength = null, maxTokensPerChunk = 8, tokenOverlap = null");
 
             // Set a custom token splitting threshold
-            int? originalThreshold = TokenEstimator.TokenSplitThreshold;
-            TokenEstimator.TokenSplitThreshold = 4; // Split tokens longer than 4 characters
+            int? originalThreshold = _TokenEstimator.TokenSplitThreshold;
+            _TokenEstimator.TokenSplitThreshold = 4; // Split tokens longer than 4 characters
 
             PrintTokenSplittingInfo(); // Will show the custom threshold
             Console.WriteLine();
@@ -257,12 +259,12 @@
             string input = "The quick brown fox jumps over the lazy dog. " +
                 "This sentence contains several words that exceed our custom threshold of 4 characters.";
 
-            var result = TokenEstimator.EstimateTokenCount(input, maxTokensPerChunk: 8);
+            var result = _TokenEstimator.EstimateTokenCount(input, maxTokensPerChunk: 8);
 
             PrintTokenizationResult(result);
 
             // Restore the original threshold
-            TokenEstimator.TokenSplitThreshold = originalThreshold;
+            _TokenEstimator.TokenSplitThreshold = originalThreshold;
 
             Console.WriteLine();
         }
@@ -279,46 +281,46 @@
 
             // First, process with default token splitting (threshold = 7)
             Console.WriteLine("WITH DEFAULT TOKEN SPLITTING (threshold = 7):");
-            int? originalThreshold = TokenEstimator.TokenSplitThreshold;
-            TokenEstimator.TokenSplitThreshold = 7;
+            int? originalThreshold = _TokenEstimator.TokenSplitThreshold;
+            _TokenEstimator.TokenSplitThreshold = 7;
             PrintTokenSplittingInfo();
             Console.WriteLine($"Chunking constraint: maxTokensPerChunk = {maxTokensPerChunk}");
             Console.WriteLine();
 
-            var resultWithSplitting = TokenEstimator.EstimateTokenCount(input, maxTokensPerChunk: maxTokensPerChunk);
+            var resultWithSplitting = _TokenEstimator.EstimateTokenCount(input, maxTokensPerChunk: maxTokensPerChunk);
             PrintTokenizationResult(resultWithSplitting);
 
             // Then process with token splitting disabled
             Console.WriteLine("\nWITH TOKEN SPLITTING DISABLED:");
-            TokenEstimator.TokenSplitThreshold = null;
+            _TokenEstimator.TokenSplitThreshold = null;
             PrintTokenSplittingInfo();
             Console.WriteLine($"Chunking constraint: maxTokensPerChunk = {maxTokensPerChunk}");
             Console.WriteLine();
 
-            var resultWithoutSplitting = TokenEstimator.EstimateTokenCount(input, maxTokensPerChunk: maxTokensPerChunk);
+            var resultWithoutSplitting = _TokenEstimator.EstimateTokenCount(input, maxTokensPerChunk: maxTokensPerChunk);
             PrintTokenizationResult(resultWithoutSplitting);
 
             // Finally process with a custom threshold
             Console.WriteLine("\nWITH CUSTOM TOKEN SPLITTING (threshold = 3):");
-            TokenEstimator.TokenSplitThreshold = 3;
+            _TokenEstimator.TokenSplitThreshold = 3;
             PrintTokenSplittingInfo();
             Console.WriteLine($"Chunking constraint: maxTokensPerChunk = {maxTokensPerChunk}");
             Console.WriteLine();
 
-            var resultWithCustomSplitting = TokenEstimator.EstimateTokenCount(input, maxTokensPerChunk: maxTokensPerChunk);
+            var resultWithCustomSplitting = _TokenEstimator.EstimateTokenCount(input, maxTokensPerChunk: maxTokensPerChunk);
             PrintTokenizationResult(resultWithCustomSplitting);
 
             // Restore the original threshold
-            TokenEstimator.TokenSplitThreshold = originalThreshold;
+            _TokenEstimator.TokenSplitThreshold = originalThreshold;
 
             Console.WriteLine();
         }
 
         private static void PrintTokenSplittingInfo()
         {
-            if (TokenEstimator.TokenSplitThreshold.HasValue)
+            if (_TokenEstimator.TokenSplitThreshold.HasValue)
             {
-                Console.WriteLine($"Token splitting: ENABLED (threshold = {TokenEstimator.TokenSplitThreshold.Value} characters)");
+                Console.WriteLine($"Token splitting: ENABLED (threshold = {_TokenEstimator.TokenSplitThreshold.Value} characters)");
             }
             else
             {

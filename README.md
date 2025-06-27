@@ -4,9 +4,10 @@
 
 Model tokenizer SDK.  This SDK uses the modeltokenizer docker image found [here](https://hub.docker.com/r/jchristn/modeltokenizer) (repository for the Docker image is [here](https://github.com/jchristn/modeltokenizer)).
 
-## New in v2.0.x
+## New in v3.0.x
 
-- Compatibility with v2.0 of the Docker container
+- Remove use of static classes for TokenEstimator
+- Added `Logger` to `ModelTokenizer`
 
 ## Help or Feedback
 
@@ -18,6 +19,8 @@ Need help or have feedback? Please file an issue here!
 using ModelTokenizerSdk;
 
 ModelTokenizer tokenizer = new ModelTokenizer(endpoint);
+tokenizer.Logger = Console.WriteLine;
+
 bool connected = await tokenizer.ValidateConnectivity();
 
 TokenizationResult result1 = await tokenizer.Tokenize(
@@ -224,18 +227,20 @@ TokenizationResult result1 = await tokenizer.Tokenize(
 Should you need to estimate tokenization without a model, use the `TokenEstimator` class, which follows the same signature and response as the `ModelTokenizerSdk`.  Note that `TokenEstimator` is only an estimator, and does not actually use a model, therefore, there is no dictionary specifying what the exact tokens are in a given model.  
 
 ```csharp
-TokenEstimator.TokenSplitThreshold = 7; // automatically split tokens that are at least 7 characters in length
-TokenEstimator.AvgCharsPerToken = 4.0;  // average number of characters per token
-TokenEstimator.SeparatorTokens = [ '.', ',', ';', ... ];  // or use the default values
+TokenEstimator estimator = new TokenEstimator();
 
-TokenizationResult result = TokenEstimator.EstimateTokenCount(
+estimator.TokenSplitThreshold = 7; // automatically split tokens that are at least 7 characters in length
+estimator.AvgCharsPerToken = 4.0;  // average number of characters per token
+estimator.SeparatorTokens = [ '.', ',', ';', ... ];  // or use the default values
+
+TokenizationResult result = estimator.EstimateTokenCount(
     "The quick brown fox jumped happily over the lazy brown dog chillaxing in his bed.",
     128, // max chunk length, or null for no chunking
     8,   // max tokens per chunk
     2    // token overlap amongst chunks
 );
 
-BatchTokenizationResult result = TokenEstimator.EstimateTokenCount(
+BatchTokenizationResult result = estimator.EstimateTokenCount(
     new List<string> { "Hello, world!" },
     128,
     8,

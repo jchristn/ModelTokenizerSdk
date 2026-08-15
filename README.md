@@ -2,7 +2,7 @@
 
 # Model Tokenizer SDK
 
-Model tokenizer SDK.  This SDK uses the modeltokenizer docker image found [here](https://hub.docker.com/r/jchristn/modeltokenizer) (repository for the Docker image is [here](https://github.com/jchristn/modeltokenizer)).
+Model tokenizer SDK.  This SDK uses the modeltokenizer docker image found [here](https://hub.docker.com/r/jchristn77/modeltokenizer) (repository for the Docker image is [here](https://github.com/jchristn/modeltokenizer)).
 
 ## New in v3.0.x
 

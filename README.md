@@ -248,6 +248,28 @@ BatchTokenizationResult result = estimator.EstimateTokenCount(
 );
 ```
 
+## Testing
+
+Tests are built on [Touchstone](https://www.nuget.org/packages/Touchstone), a runner-agnostic test descriptor framework. Every test case is defined once in `Test.Shared` (the single source of truth) and executed unchanged through multiple hosts:
+
+- `Test.Shared` - all test suites, defined as Touchstone descriptors covering `TokenEstimator` (tokenization, chunking, token splitting, configuration), `ModelTokenizer` (construction, endpoint handling, argument validation, connectivity), the data models, and the JSON serialization contract.
+- `Test.Automated` - Touchstone CLI runner. Prints a colored pass/fail/skip table and returns exit code 0 when everything passes.
+- `Test.Xunit` - xUnit adapter (fact-style and theory-style hosts).
+- `Test.Nunit` - NUnit adapter (fact-style and `TestCaseSource`-driven hosts).
+
+Cases that require the running modeltokenizer microservice are declared as skipped so the suite stays green offline; the interactive `Test` console application exercises those paths against a live endpoint.
+
+```
+# Console runner (writes an optional JSON report)
+dotnet run --project src/Test.Automated -- --results results.json
+
+# xUnit / NUnit hosts
+dotnet test src/Test.Xunit
+dotnet test src/Test.Nunit
+```
+
+The `Test` and `Test.Estimator` projects are interactive console applications for exercising the SDK by hand.
+
 ## Version History
 
 Please refer to CHANGELOG.md.

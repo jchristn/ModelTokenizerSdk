@@ -224,6 +224,20 @@ namespace Test.Shared
                     TestAssert.Equal(0, result.Results[1].TokenCount);
                     return Task.CompletedTask;
                 }),
+
+                Case(EstimatorTokenizationSuiteId, "BatchWithNullElement", "Batch containing a null element yields an empty result for it", _ =>
+                {
+                    TokenEstimator est = new TokenEstimator();
+                    BatchTokenizationResult result = est.EstimateTokenCount(
+                        new List<string> { "hello world", null });
+
+                    TestAssert.Equal(2, result.Results.Count);
+                    TestAssert.Equal(2, result.Results[0].TokenCount);
+                    TestAssert.Equal(0, result.Results[1].TokenCount);
+                    TestAssert.Empty(result.Results[1].Tokens);
+                    TestAssert.Null(result.Results[1].Text);
+                    return Task.CompletedTask;
+                }),
             };
 
             return Suite(EstimatorTokenizationSuiteId, "TokenEstimator: Tokenization", cases);
@@ -341,6 +355,39 @@ namespace Test.Shared
                     TokenizationResult result = est.EstimateTokenCount(string.Empty, maxTokensPerChunk: 2, tokenOverlap: 1);
 
                     TestAssert.Empty(result.Chunks);
+                    return Task.CompletedTask;
+                }),
+
+                Case(EstimatorChunkingSuiteId, "BatchHonorsChunking", "Batch estimation applies chunk constraints to every result", _ =>
+                {
+                    TokenEstimator est = new TokenEstimator();
+                    BatchTokenizationResult result = est.EstimateTokenCount(
+                        new List<string> { "one two three four five", "alpha beta gamma" },
+                        maxTokensPerChunk: 2);
+
+                    // First input: 5 tokens, 2 per chunk => 3 chunks. Second: 3 tokens => 2 chunks.
+                    TestAssert.Equal(2, result.Results.Count);
+                    TestAssert.Equal(3, result.Results[0].Chunks.Count);
+                    TestAssert.Equal(2, result.Results[1].Chunks.Count);
+                    foreach (TokenizationResult res in result.Results)
+                        foreach (TokenizationResult chunk in res.Chunks)
+                            TestAssert.True(chunk.TokenCount <= 2, "Batch chunk exceeded maxTokensPerChunk");
+                    return Task.CompletedTask;
+                }),
+
+                Case(EstimatorChunkingSuiteId, "OverlapEqualToChunkSizeTerminates", "Overlap equal to the chunk size still terminates and covers every token", _ =>
+                {
+                    TokenEstimator est = new TokenEstimator();
+                    // overlap == maxTokensPerChunk would stall advancement; the infinite-loop guard
+                    // must force forward progress so the call returns and covers all tokens.
+                    TokenizationResult result = est.EstimateTokenCount(
+                        "one two three four", maxTokensPerChunk: 2, tokenOverlap: 2);
+
+                    TestAssert.True(result.Chunks.Count > 0, "Expected at least one chunk");
+                    TestAssert.Equal(0, result.Chunks[0].TokenIndexStart);
+                    // The final chunk must reach the last token index (all tokens covered).
+                    TokenizationResult last = result.Chunks[result.Chunks.Count - 1];
+                    TestAssert.Equal(result.TokenCount - 1, last.TokenIndexEnd);
                     return Task.CompletedTask;
                 }),
 
@@ -473,6 +520,27 @@ namespace Test.Shared
                     {
                         est.AvgCharsPerToken = 3.5;
                         TestAssert.Equal(3.5, est.AvgCharsPerToken);
+                    }
+                    finally { est.AvgCharsPerToken = original; }
+                    return Task.CompletedTask;
+                }),
+
+                Case(EstimatorConfigSuiteId, "AvgCharsPerTokenAffectsArtificialTokens", "AvgCharsPerToken drives the artificial-token fallback for separatorless whitespace input", _ =>
+                {
+                    TokenEstimator est = new TokenEstimator();
+                    double original = est.AvgCharsPerToken;
+                    try
+                    {
+                        // Whitespace-only input yields no word tokens, so the estimator falls back to
+                        // character chunks of size AvgCharsPerToken. An 8-char input therefore yields
+                        // ceil(8 / avg) artificial tokens, proving the property influences output.
+                        string input = new string(' ', 8);
+
+                        est.AvgCharsPerToken = 4.0;
+                        TestAssert.Equal(2, est.EstimateTokenCount(input).TokenCount);
+
+                        est.AvgCharsPerToken = 2.0;
+                        TestAssert.Equal(4, est.EstimateTokenCount(input).TokenCount);
                     }
                     finally { est.AvgCharsPerToken = original; }
                     return Task.CompletedTask;

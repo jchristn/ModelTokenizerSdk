@@ -311,6 +311,20 @@ namespace Test.Shared
                     return Task.CompletedTask;
                 }),
 
+                Case(SerializationSuiteId, "ResultNullChunksCoercedOnDeserialize", "A null 'chunks' value in the payload deserializes to an empty list", _ =>
+                {
+                    // The Chunks setter coerces null to an empty list; this must hold when the null
+                    // arrives via deserialization, not just direct assignment.
+                    string json = "{\"text\":\"hi\",\"tokens\":[\"hi\"],\"token_count\":1,\"chunks\":null}";
+
+                    TokenizationResult result = JsonSerializer.Deserialize<TokenizationResult>(json);
+
+                    TestAssert.NotNull(result);
+                    TestAssert.NotNull(result.Chunks);
+                    TestAssert.Empty(result.Chunks);
+                    return Task.CompletedTask;
+                }),
+
                 Case(SerializationSuiteId, "BatchDeserializesResults", "BatchTokenizationResult deserializes a results array", _ =>
                 {
                     string json =
